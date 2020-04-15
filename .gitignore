@@ -1,0 +1,16 @@
+.project
+.idea
+.gradle
+
+out/
+build/
+logs/
+node_modules/
+
+*.iml
+*.zip
+*adminsdk*.json
+
+*_data.json
+*_data.json
+build_deploy.sh
