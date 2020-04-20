@@ -8,11 +8,10 @@ class StatsTransformer {
     companion object {
     }
 
-    fun transformGlobalStats(confirmedData: String, deathsData: String, recoveredData: String): GlobalStats {
+    fun transformGlobalStats(confirmedData: String, deathsData: String): GlobalStats {
         val mapOfCounts = createMapOfCounts(confirmedData, GlobalStatHelper())
         addCountTypeToMap(CountType.CONFIRMED, confirmedData, mapOfCounts, GlobalStatHelper())
         addCountTypeToMap(CountType.DEATHS, deathsData, mapOfCounts, GlobalStatHelper())
-        addCountTypeToMap(CountType.RECOVERED, recoveredData, mapOfCounts, GlobalStatHelper())
 
         val stats = mapOfCounts.map { entry ->
             entry.key.copy(counts = entry.value)
@@ -33,7 +32,8 @@ class StatsTransformer {
         return USStats(stats)
     }
 
-    private fun <T> addCountTypeToMap(countType: CountType, data: String, mapOfCounts: MutableMap<T, List<DateCounts>>, statHelper: StatHelper<T>) {
+    private fun <T> addCountTypeToMap(countType: CountType, data: String, mapOfCounts: MutableMap<T, List<DateCounts>>,
+                                      statHelper: StatHelper<T>) {
         val lines = data.split("\n")
         lines.drop(1).filter { it.isNotEmpty() }.forEach { line ->
             val values = line.split(TransformerConstants.SPLIT_ON_COMMAS_NOT_WITHIN_QUOTES, 0)
@@ -42,17 +42,26 @@ class StatsTransformer {
             val counts = mapOfCounts[stat]
 
             if (counts == null) {
-                println("Not adding due to mismatch - expecting all files to have some keys - countType[$countType] $stat because mismatch")
+                println("Not adding due to mismatch - expecting all files to have some keys" +
+                        "- countType[$countType] $stat because mismatch")
             } else {
+                var lastCount = 0
+
                 counts.withIndex().forEach { count ->
                     val num = values[count.index + statHelper.getDateStartIndex()].toInt()
 
                     when (countType) {
-                        CountType.CONFIRMED -> count.value.confirmed = num
-                        CountType.DEATHS -> count.value.deaths = num
-                        CountType.RECOVERED -> count.value.recovered = num
+                        CountType.CONFIRMED -> {
+                            count.value.confirmed = num
+                            count.value.newConfirmed = num - lastCount
+                        }
+                        CountType.DEATHS -> {
+                            count.value.deaths = num
+                            count.value.newDeaths = num - lastCount
+                        }
                     }
 
+                    lastCount = num
                 }
             }
         }
@@ -65,9 +74,10 @@ class StatsTransformer {
         val lines = data.split("\n")
         val header = lines[0]
 
-        val dates = header.split(TransformerConstants.SPLIT_ON_COMMAS_NOT_WITHIN_QUOTES, 0).drop(statHelper.getDateStartIndex()).map { dateString ->
-            LocalDate.parse(dateString, TransformerConstants.DATE_FORMATTER)
-        }
+        val dates = header
+                .split(TransformerConstants.SPLIT_ON_COMMAS_NOT_WITHIN_QUOTES, 0)
+                .drop(statHelper.getDateStartIndex())
+                .map { dateString -> LocalDate.parse(dateString, TransformerConstants.DATE_FORMATTER) }
 
         lines.drop(1).filter { it.isNotEmpty() }.forEach { line ->
             val values = line.split(TransformerConstants.SPLIT_ON_COMMAS_NOT_WITHIN_QUOTES, 0)
@@ -214,12 +224,13 @@ data class USStat(
     }
 }
 
-enum class CountType(val value: String) { CONFIRMED("confirmed"), DEATHS("deaths"), RECOVERED("recovered") }
+enum class CountType(val value: String) { CONFIRMED("confirmed"), DEATHS("deaths") }
 
 data class DateCounts(
     val date: LocalDate,
     var confirmed: Int = 0,
+    var newConfirmed: Int = 0,
     var deaths: Int = 0,
-    var recovered: Int = 0
+    var newDeaths: Int = 0
 )
 

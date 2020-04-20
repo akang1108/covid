@@ -33,7 +33,7 @@ const dataHelper = {
 
     const firstStat = usData.find(filter);
     const initialCounts = firstStat['counts'].slice(numDays).map((stat) => {
-      const count = { date: stat.date, confirmed: 0, deaths: 0 };
+      const count = { date: stat.date, confirmed: 0, newConfirmed: 0, deaths: 0, newDeaths: 0 };
       return count;
     });
 
@@ -46,7 +46,9 @@ const dataHelper = {
 
         for (let i = 0; i < counts.length; i++) {
           acc.counts[i].confirmed += counts[i].confirmed;
+          acc.counts[i].newConfirmed += counts[i].newConfirmed;
           acc.counts[i].deaths += counts[i].deaths;
+          acc.counts[i].newDeaths += counts[i].newDeaths;
         }
 
         return acc;
@@ -55,6 +57,8 @@ const dataHelper = {
     return stats;
   },
   createConfirmedDataSet: (stats, type) => chartHelper.createConfirmedDataSet(stats, type),
+  createNewConfirmedDataSet: (stats, type) => chartHelper.createNewConfirmedDataSet(stats, type),
+  createNewDeathsDataSet: (stats, type) => chartHelper.createNewDeathsDataSet(stats, type),
   createDeathsDataSet:    (stats, type) => chartHelper.createDeathsDataSet(stats, type),
   createTitle: (state = null, county = null) => {
     let title =

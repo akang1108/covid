@@ -11,6 +11,5 @@ node_modules/
 *.zip
 *adminsdk*.json
 
-*_data.json
-*_data.json
+*data*.json
 build_deploy.sh

@@ -1,9 +1,11 @@
 import Chart from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import colors from "./colors";
 
 const chartHelper = {
-  createBarChart: (chartElement, datasets, labels, title = null) => {
+  createChart: (chartElement, datasets, labels, title = null) => {
     const chart = new Chart(chartElement, {
+      plugins: [ChartDataLabels],
       type: 'bar',
       data: {
         datasets: datasets,
@@ -16,7 +18,6 @@ const chartHelper = {
   },
   createConfirmedDataSet: (stats, type) => (type === 'bar') ? chartHelper.createBarDataSet('confirmed', stats) : chartHelper.createLineDataSet('confirmed', stats),
   createDeathsDataSet: (stats, type) => (type === 'bar') ? chartHelper.createBarDataSet('deaths', stats) : chartHelper.createLineDataSet('deaths', stats),
-  createRecoveredDataSet: (stats, type) => (type === 'bar') ? chartHelper.createBarDataSet('recovered', stats) : chartHelper.createLineDataSet('recovered', stats),
   createNewConfirmedDataSet: (stats, type) => (type === 'bar') ? chartHelper.createBarDataSet('newConfirmed', stats) : chartHelper.createLineDataSet('newConfirmed', stats),
   createNewDeathsDataSet: (stats, type) => (type === 'bar') ? chartHelper.createBarDataSet('newDeaths', stats) : chartHelper.createLineDataSet('newDeaths', stats),
   createBarDataSet: (statsType, stats) => {
@@ -26,7 +27,10 @@ const chartHelper = {
       backgroundColor: colors[statsType],
       borderColor: colors[`${statsType}Opaque`],
       borderWidth: 2,
-      type: 'bar'
+      type: 'bar',
+      datalabels: {
+        color: colors[`${statsType}Opaque`]
+      },
     };
   },
   createLineDataSet: (statsType, stats) => {
@@ -39,7 +43,30 @@ const chartHelper = {
       pointHitRadius: 20,
       lineTension: .3,
       fill: false,
-      type: 'line'
+      type: 'line',
+      datalabels: {
+        borderRadius: 3,
+        borderWidth: 1,
+        padding: 2,
+        offset: 5,
+        borderColor: colors[statsType],
+        color: colors[`${statsType}Opaque`],
+        // display: (context) => {
+        //   const index = context.dataIndex;
+        //   const lastIndex = context.dataset.data.length - 1;
+        //   const numToShow = 3;
+        //   const interval = Math.round(lastIndex / numToShow);
+        //
+        //   console.info('interval' + interval);
+        //   console.info('diff' + (lastIndex - index));
+        //   console.info((lastIndex - index) % interval);
+        //
+        //   return ((lastIndex - index) % interval === 0);
+        // },
+        display: 'auto',
+        align: 'top',
+        rotation: 0,
+      },
     };
   },
   createOptions: (title = null) => {
@@ -55,6 +82,11 @@ const chartHelper = {
             beginAtZero: true,
           }
         }]
+      },
+      plugins: {
+        datalabels: {
+          display: false,
+        }
       }
     };
   }
