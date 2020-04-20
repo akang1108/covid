@@ -51,11 +51,15 @@ export default {
     }
   },
   mounted() {
+    const isSmall = window.matchMedia('(max-device-width: 480px)').matches;
+    console.info('isSmall:', isSmall);
+    const numDays = isSmall ? 7 : 21;
+
     axios.get(`${BASE_URL}/illinois_data.json`).then(response => {
       this.usData = response.data['usStats'];
       this.usData = dataHelper.cleanseData(this.usData);
 
-      let stats = dataHelper.getUSStats(this.usData, this.state, this.county);
+      let stats = dataHelper.getUSStats(this.usData, this.state, this.county, numDays);
       this.createChart(
         'covid-chart-county-new-confirmed',
         stats,
@@ -81,7 +85,7 @@ export default {
         `${this.county} county deaths all`,
       );
 
-      stats = dataHelper.getUSStats(this.usData, this.state);
+      stats = dataHelper.getUSStats(this.usData, this.state, null, numDays);
       this.createChart(
         'covid-chart-state-new-confirmed',
         stats,
@@ -127,5 +131,11 @@ export default {
     position: relative;
     display: inline-block;
     width: 49%;
+  }
+
+  @media only screen and (max-device-width: 480px) {
+    .chart {
+      width: 100%;
+    }
   }
 </style>
