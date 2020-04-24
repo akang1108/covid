@@ -100,8 +100,8 @@ class GlobalStatHelper: StatHelper<GlobalStat> {
         return GlobalStat(
                 countryOrRegion = values[1],
                 provinceOrState = values[0],
-                latitude = values[2].toFloat(),
-                longitude = values[3].toFloat()
+                latitude = if (values[2].trim() != "") values[2].trim().toFloat() else null,
+                longitude = if (values[3].trim() != "") values[3].trim().toFloat() else null
         )
     }
 
@@ -119,8 +119,8 @@ class USConfirmedStatHelper: StatHelper<USStat> {
                 county = values[5],
                 countryOrRegion = values[7],
                 provinceOrState = values[6],
-                latitude = values[8].toFloat(),
-                longitude = values[9].toFloat()
+                latitude = if (values[8].trim() != "") values[8].trim().toFloat() else null,
+                longitude = if (values[9].trim() != "") values[9].trim().toFloat() else null
         )
     }
 
@@ -138,8 +138,8 @@ class USDeathStatHelper: StatHelper<USStat> {
                 county = values[5],
                 countryOrRegion = values[7],
                 provinceOrState = values[6],
-                latitude = values[8].toFloat(),
-                longitude = values[9].toFloat(),
+                latitude = if (values[8].trim() != "") values[8].trim().toFloat() else null,
+                longitude = if (values[9].trim() != "") values[9].trim().toFloat() else null,
                 population = values[11].toInt()
         )
     }
@@ -160,8 +160,8 @@ data class GlobalStats(
 data class GlobalStat(
         val countryOrRegion: String,
         val provinceOrState: String,
-        val latitude: Float,
-        val longitude: Float,
+        val latitude: Float?,
+        val longitude: Float?,
         val counts: List<DateCounts> = emptyList()
 ) {
     override fun equals(other: Any?): Boolean {
@@ -197,8 +197,8 @@ data class USStat(
         val county: String,
         val countryOrRegion: String,
         val provinceOrState: String,
-        val latitude: Float,
-        val longitude: Float,
+        val latitude: Float?,
+        val longitude: Float?,
         val counts: List<DateCounts> = emptyList()
 ) {
     override fun equals(other: Any?): Boolean {

@@ -74,7 +74,7 @@ class DataETL {
         const val CONFIRMED_GLOBAL_PATH = "/confirmed_global.csv"
         const val DEATHS_GLOBAL_PATH = "/deaths_global.csv"
 
-        const val OUTPUT_DIR = "ui/public"
+        const val OUTPUT_DIR = "../ui/public"
     }
 }
 
