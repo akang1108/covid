@@ -1,4 +1,3 @@
-import colors from "./colors";
 import chartHelper from "./chartHelper";
 
 const dataHelper = {
@@ -11,7 +10,7 @@ const dataHelper = {
   cleanseData: (data) => {
     return data.map((stat) => {
       let counts = stat.counts.map((count) => {
-        count.date = count.date.substring(5);
+        count.dt = count.dt.substring(5);
         return count;
       });
       return stat;
@@ -23,9 +22,8 @@ const dataHelper = {
   createCountyFilter: (state, county) => {
     return (stat) => stat['provinceOrState'] === state && stat['county'] === county;
   },
-  getUSStats: (usData, state = null, county = null, numberOfDays = 21) => {
-    const numDays = Math.max(usData[0].counts.length - numberOfDays, 1)
-
+  getUSStats: (usData, state = null, county = null, numberOfWeeks = 3) => {
+    const numDays = Math.max(usData[0].counts.length - (7 * numberOfWeeks), 1);
     const filter =
       (state && county) ? dataHelper.createCountyFilter(state, county) :
         (state) ? dataHelper.createStateFilter(state) :
@@ -33,7 +31,7 @@ const dataHelper = {
 
     const firstStat = usData.find(filter);
     const initialCounts = firstStat['counts'].slice(numDays).map((stat) => {
-      const count = { date: stat.date, confirmed: 0, newConfirmed: 0, deaths: 0, newDeaths: 0 };
+      const count = { dt: stat.dt, c: 0, nc: 0, d: 0, nd: 0 };
       return count;
     });
 
@@ -45,10 +43,10 @@ const dataHelper = {
         const counts = stat.counts.slice(numDays);
 
         for (let i = 0; i < counts.length; i++) {
-          acc.counts[i].confirmed += counts[i].confirmed;
-          acc.counts[i].newConfirmed += counts[i].newConfirmed;
-          acc.counts[i].deaths += counts[i].deaths;
-          acc.counts[i].newDeaths += counts[i].newDeaths;
+          acc.counts[i].c += counts[i].c;
+          acc.counts[i].nc += counts[i].nc;
+          acc.counts[i].d += counts[i].d;
+          acc.counts[i].nd += counts[i].nd;
         }
 
         return acc;

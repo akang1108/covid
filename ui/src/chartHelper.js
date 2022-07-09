@@ -23,7 +23,7 @@ const chartHelper = {
   createBarDataSet: (statsType, stats) => {
     return {
       label: statsType,
-      data: stats.counts.map((count) => count[statsType]),
+      data: stats.counts.map((count) => count[chartHelper.mapStatsType(statsType)]),
       backgroundColor: colors[statsType],
       borderColor: colors[`${statsType}Opaque`],
       borderWidth: 2,
@@ -33,10 +33,32 @@ const chartHelper = {
       },
     };
   },
+  createLabel: (statsType) => {
+    if (statsType === 'newDeaths') {
+      return 'deaths';
+    } else if (statsType === 'deaths') {
+      return 'accumulated deaths';
+    } else if (statsType === 'newConfirmed') {
+      return 'confirmed';
+    } else if (statsType === 'confirmed') {
+      return 'accumulated confirmed';
+    }
+  },
+  mapStatsType: (statsType) => {
+    if (statsType === 'newDeaths') {
+      return 'nd';
+    } else if (statsType === 'deaths') {
+      return 'd';
+    } else if (statsType === 'newConfirmed') {
+      return 'nc';
+    } else if (statsType === 'confirmed') {
+      return 'c';
+    }
+  },
   createLineDataSet: (statsType, stats) => {
     return {
-      label: statsType,
-      data: stats.counts.map((count) => count[statsType]),
+      label: chartHelper.createLabel(statsType),
+      data: stats.counts.map((count) => count[chartHelper.mapStatsType(statsType)]),
       backgroundColor: colors[statsType],
       borderColor: colors[`${statsType}Opaque`],
       borderWidth: 2,
@@ -70,11 +92,14 @@ const chartHelper = {
     };
   },
   createOptions: (title = null) => {
-    const titleOption = (title) ? { display: true, text: title } : { display: false };
+    const titleOption = (title) ?
+      { display: true, text: title, fontSize: 20 } :
+      { display: false };
 
     return {
       title: titleOption,
       responsive: true,
+      aspectRatio: 3,
       lineTension: 1,
       scales: {
         yAxes: [{
@@ -87,7 +112,10 @@ const chartHelper = {
         datalabels: {
           display: false,
         }
-      }
+      },
+      legend: {
+        display: false,
+      },
     };
   }
 };

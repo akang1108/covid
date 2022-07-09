@@ -52,12 +52,12 @@ class StatsTransformer {
 
                     when (countType) {
                         CountType.CONFIRMED -> {
-                            count.value.confirmed = num
-                            count.value.newConfirmed = num - lastCount
+                            count.value.c = num
+                            count.value.nc = num - lastCount
                         }
                         CountType.DEATHS -> {
-                            count.value.deaths = num
-                            count.value.newDeaths = num - lastCount
+                            count.value.d = num
+                            count.value.nd = num - lastCount
                         }
                     }
 
@@ -81,7 +81,7 @@ class StatsTransformer {
 
         lines.drop(1).filter { it.isNotEmpty() }.forEach { line ->
             val values = line.split(TransformerConstants.SPLIT_ON_COMMAS_NOT_WITHIN_QUOTES, 0)
-            val counts = dates.withIndex().map { DateCounts(date = it.value) }
+            val counts = dates.withIndex().map { DateCounts(dt = it.value) }
             val stat = statHelper.create(values)
             mapOfCounts[stat] = counts
         }
@@ -227,10 +227,10 @@ data class USStat(
 enum class CountType(val value: String) { CONFIRMED("confirmed"), DEATHS("deaths") }
 
 data class DateCounts(
-    val date: LocalDate,
-    var confirmed: Int = 0,
-    var newConfirmed: Int = 0,
-    var deaths: Int = 0,
-    var newDeaths: Int = 0
+    val dt: LocalDate,      // date
+    var c: Int = 0,         // confirmed
+    var nc: Int = 0,        // new confirmed
+    var d: Int = 0,         // deaths
+    var nd: Int = 0         // new deaths
 )
 

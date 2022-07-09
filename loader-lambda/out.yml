@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: An AWS Lambda application that calls the Lambda API.
+Resources:
+  function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://lambda-artifacts-ae1bca17ab3e1efb/8672003f18f92fce2faf064d4cb6fc71
+      Handler: info.akang.covid.CovidDataLoaderLambdaHandler::handleRequest
+      Runtime: java8
+      Description: Java function
+      MemorySize: 512
+      Timeout: 10
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AWSLambdaReadOnlyAccess
+      - AWSXrayWriteOnlyAccess
+      - AWSLambdaVPCAccessExecutionRole
+      Tracing: Active
+      Layers:
+      - Ref: libs
+  libs:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: covid-data-loader-lambda
+      Description: Dependencies for the covid data loader lambda
+      ContentUri: s3://lambda-artifacts-ae1bca17ab3e1efb/c70c0566059582629ae4b60d07ba1bd3
+      CompatibleRuntimes:
+      - java8

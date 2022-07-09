@@ -1,3 +1,9 @@
+# Application specific
+*data*.json
+build_deploy.sh
+bucket-name.txt
+
+# General
 .project
 .idea
 .gradle
@@ -11,5 +17,3 @@ node_modules/
 *.zip
 *adminsdk*.json
 
-*data*.json
-build_deploy.sh
